@@ -25,10 +25,27 @@ export function Sign_up() {
     <div className="w-full flex flex-col h-full items-center font-['Plus_Jakarta_Sans'] px-6">
       <img src="./public/Logo.png" className="w-[120px]" alt="" />
       <div className="header text-center">
-        <h1 className="text-3xl font-bold">Sign in to your account</h1>
+        <h1 className="text-3xl font-bold">Sign Up For Free.</h1>
         <p className="text-[#475569] font-light mt-2">
           Unleash your inner sloth 4.0 right now.
         </p>
+      </div>
+
+      <div className="flex flex-col justify-center items-start w-full mt-6">
+        <label className="text-sm font-bold" htmlFor="email">
+          Full Name
+        </label>
+        <div className="border w-full py-3 px-6 rounded-full mt-2 bg-white flex gap-2 items-center">
+          <img src="./public/mail.svg" alt="" />
+          <input
+            type="text"
+            className="bg-white w-full"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            value={email}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col justify-center items-start w-full mt-6">
@@ -93,20 +110,22 @@ export function Sign_up() {
         {loading_auth ? (
           <img src="./public/loader.gif" alt="" className="w-[20px]" />
         ) : (
-          "Sign In"
+          <span className="flex gap-2 items-center">
+            Sign Up
+            <span>
+              <img src="./public/singin.svg" alt="" />
+            </span>
+          </span>
         )}
       </button>
 
       <div className="create_account flex flex-col justify-center items-center mt-3">
-        <div className="row_1 flex justify-center items-center gap-1 text-sm font-bold cursor-pointer">
-          <p>Don't have an account?</p>
-          <p className="text-[#4F46E5]">Sign Up</p>
-        </div>
-
-        <div className="row_2 flex justify-center items-center gap-1 text-sm font-bold">
-          <p className="text-[#4F46E5] mt-2 cursor-pointer">
-            Forgot your password?
-          </p>
+        <div
+          className="row_1 flex justify-center items-center gap-1 text-sm font-bold cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          <p>Already have an account?</p>
+          <p className="text-[#4F46E5]">Sign In</p>
         </div>
       </div>
 
@@ -119,12 +138,12 @@ export function Sign_up() {
 
       <button className="w-full mt-3 bg-white border py-3 px-6 rounded-full text-[#1E293B] font-bold flex justify-center items-center">
         <img src="./public/google-icon.webp" className="w-[22px] mr-2" alt="" />
-        Sign In With Google
+        Sign Up With Google
       </button>
 
       <button className="w-full mt-3 bg-white border py-3 px-6 rounded-full text-[#1E293B] font-bold flex justify-center items-center">
         <img src="./public/facebook.png" className="w-[22px] mr-2" alt="" />
-        Sign In With Meta
+        Sign Up With Meta
       </button>
     </div>
   );

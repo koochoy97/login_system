@@ -93,18 +93,29 @@ export function Sign_in() {
         {loading_auth ? (
           <img src="./public/loader.gif" alt="" className="w-[20px]" />
         ) : (
-          "Sign In"
+          <span className="flex gap-2 items-center">
+            Sign In
+            <span>
+              <img src="./public/singin.svg" alt="" />
+            </span>
+          </span>
         )}
       </button>
 
       <div className="create_account flex flex-col justify-center items-center mt-3">
-        <div className="row_1 flex justify-center items-center gap-1 text-sm font-bold cursor-pointer">
+        <div
+          className="row_1 flex justify-center items-center gap-1 text-sm font-bold cursor-pointer"
+          onClick={() => navigate("/sign_up")}
+        >
           <p>Don't have an account?</p>
           <p className="text-[#4F46E5]">Sign Up</p>
         </div>
 
         <div className="row_2 flex justify-center items-center gap-1 text-sm font-bold">
-          <p className="text-[#4F46E5] mt-2 cursor-pointer">
+          <p
+            className="text-[#4F46E5] mt-2 cursor-pointer"
+            onClick={() => navigate("/reset_password")}
+          >
             Forgot your password?
           </p>
         </div>
