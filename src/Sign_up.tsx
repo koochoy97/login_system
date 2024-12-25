@@ -1,10 +1,11 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { DataContext } from "./Context/DataContext";
 import { useNavigate } from "react-router";
+import { Error_message } from "./Error_message";
 
 export function Sign_up() {
-  const { login_user, user, user_logged, loading_auth } =
-    useContext(DataContext);
+  const { user_logged, loading_auth, create_user } = useContext(DataContext);
+  const [full_name, setFull_name] = useState("Jaime Koochoy");
   const [email, setEmail] = useState("jaime23koochoy@gmail.com");
   const [password, setPassword] = useState("Teclado6");
 
@@ -12,7 +13,7 @@ export function Sign_up() {
   let navigate = useNavigate();
 
   const handle_submit = (e) => {
-    login_user(email, password);
+    create_user(email, password);
   };
 
   useEffect(() => {
@@ -39,11 +40,11 @@ export function Sign_up() {
           <img src="./public/mail.svg" alt="" />
           <input
             type="text"
-            className="bg-white w-full"
+            className="bg-white w-full focus:outline-none"
             onChange={(e) => {
-              setEmail(e.target.value);
+              setFull_name(e.target.value);
             }}
-            value={email}
+            value={full_name}
           />
         </div>
       </div>
@@ -56,7 +57,7 @@ export function Sign_up() {
           <img src="./public/mail.svg" alt="" />
           <input
             type="text"
-            className="bg-white w-full"
+            className="bg-white w-full focus:outline-none"
             onChange={(e) => {
               setEmail(e.target.value);
             }}
@@ -74,7 +75,7 @@ export function Sign_up() {
 
           <input
             type={`${hide ? "password" : "text"}`}
-            className=" w-full"
+            className=" w-full focus:outline-none"
             onChange={(e) => {
               setPassword(e.target.value);
             }}
@@ -118,6 +119,7 @@ export function Sign_up() {
           </span>
         )}
       </button>
+      <Error_message />
 
       <div className="create_account flex flex-col justify-center items-center mt-3">
         <div

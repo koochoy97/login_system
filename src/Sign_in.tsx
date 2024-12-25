@@ -1,6 +1,7 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { DataContext } from "./Context/DataContext";
 import { useNavigate } from "react-router";
+import { Error_message } from "./Error_message";
 
 export function Sign_in() {
   const { login_user, user, user_logged, loading_auth } =
@@ -25,7 +26,7 @@ export function Sign_in() {
     <div className="w-full flex flex-col h-full items-center font-['Plus_Jakarta_Sans'] px-6">
       <img src="./public/Logo.png" className="w-[120px]" alt="" />
       <div className="header text-center">
-        <h1 className="text-3xl font-bold">Sign in to your account</h1>
+        <h1 className="text-3xl font-bold">Log In to your account</h1>
         <p className="text-[#475569] font-light mt-2">
           Unleash your inner sloth 4.0 right now.
         </p>
@@ -39,7 +40,7 @@ export function Sign_in() {
           <img src="./public/mail.svg" alt="" />
           <input
             type="text"
-            className="bg-white w-full"
+            className="bg-white w-full focus:outline-none"
             onChange={(e) => {
               setEmail(e.target.value);
             }}
@@ -57,7 +58,7 @@ export function Sign_in() {
 
           <input
             type={`${hide ? "password" : "text"}`}
-            className=" w-full"
+            className=" w-full focus:outline-none"
             onChange={(e) => {
               setPassword(e.target.value);
             }}
@@ -94,13 +95,14 @@ export function Sign_in() {
           <img src="./public/loader.gif" alt="" className="w-[20px]" />
         ) : (
           <span className="flex gap-2 items-center">
-            Sign In
+            Log In
             <span>
               <img src="./public/singin.svg" alt="" />
             </span>
           </span>
         )}
       </button>
+      <Error_message />
 
       <div className="create_account flex flex-col justify-center items-center mt-3">
         <div

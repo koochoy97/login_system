@@ -30,22 +30,24 @@ export function DataContextProvider(props) {
 
   const [user, setUser] = useState({});
   const [user_logged, setUser_logged] = useState(null);
-
+  const [error, setError] = useState(null);
   const [loading_auth, setLoading_auth] = useState(false);
 
-  async function create_user() {
+  async function create_user(email, password) {
+    setLoading_auth(true);
+
     if (auth) {
-      createUserWithEmailAndPassword(
-        auth,
-        "jaime223koochoy@gmail.com",
-        "Teclado6"
-      )
+      createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           console.log("User created successfully:", userCredential.user);
+          setLoading_auth(false);
+          setUser_logged(true);
         })
         .catch((error) => {
           console.error("Error Code:", error.code);
           console.error("Error Message:", error.message);
+          setError(error);
+          setLoading_auth(false);
         });
     }
   }
@@ -64,6 +66,8 @@ export function DataContextProvider(props) {
         setLoading_auth(false);
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.error("Error Message:", error.message);
+        setError(error);
       });
   }
 
@@ -107,6 +111,9 @@ export function DataContextProvider(props) {
         log_out,
         loading_auth,
         setLoading_auth,
+        create_user,
+        error,
+        setError,
       }}
     >
       {props.children}
