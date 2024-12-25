@@ -31,6 +31,8 @@ export function DataContextProvider(props) {
   const [user, setUser] = useState({});
   const [user_logged, setUser_logged] = useState(null);
 
+  const [loading_auth, setLoading_auth] = useState(false);
+
   async function create_user() {
     if (auth) {
       createUserWithEmailAndPassword(
@@ -49,14 +51,17 @@ export function DataContextProvider(props) {
   }
 
   async function login_user(email, password) {
+    setLoading_auth(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         setUser(user);
+        setLoading_auth(false);
         setUser_logged(true);
       })
       .catch((error) => {
+        setLoading_auth(false);
         const errorCode = error.code;
         const errorMessage = error.message;
       });
@@ -93,7 +98,16 @@ export function DataContextProvider(props) {
 
   return (
     <DataContext.Provider
-      value={{ test, login_user, check_user, user, user_logged, log_out }}
+      value={{
+        test,
+        login_user,
+        check_user,
+        user,
+        user_logged,
+        log_out,
+        loading_auth,
+        setLoading_auth,
+      }}
     >
       {props.children}
     </DataContext.Provider>

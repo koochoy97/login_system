@@ -2,7 +2,7 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { DataContext } from "./Context/DataContext";
 import { useNavigate } from "react-router";
 
-export function Sign_in() {
+export function Sign_up() {
   const { login_user, user, user_logged, loading_auth } =
     useContext(DataContext);
   const [email, setEmail] = useState("jaime23koochoy@gmail.com");
