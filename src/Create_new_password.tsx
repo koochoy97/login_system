@@ -1,49 +1,63 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { DataContext } from "./Context/DataContext";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
-export function Reset_password() {
-  const { login_user, user, user_logged, loading_auth, reset_password } =
+export function Create_new_password() {
+  const { user_logged, loading_auth, firebase_create_new_password } =
     useContext(DataContext);
-  const [email, setEmail] = useState("jaime23koochoy@gmail.com");
+  const [hide, setHide] = useState(true);
+  const [password, setPassword] = useState("");
 
   let navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const action_code = searchParams.get("oobCode");
 
   const handle_submit = (e) => {
-    reset_password(email);
+    firebase_create_new_password(action_code, password);
   };
-
-  useEffect(() => {
-    if (user_logged === true) {
-      navigate("/welcome");
-    }
-  }, [user_logged]);
 
   return (
     <div className="w-full flex flex-col h-full items-center font-['Plus_Jakarta_Sans'] px-6 max-w-[480px]">
       <img src="./public/Logo.png" className="w-[120px]" alt="" />
       <div className="header text-center">
-        <h1 className="text-3xl font-bold">Reset Your Password</h1>
+        <h1 className="text-3xl font-bold">Create Your New Password</h1>
         <p className="text-[#475569] font-light mt-2">
-          Forgot your password? No worries, then let’s submit password reset. It
-          will be send to your email.
+          Reset your password. Please enter your new password below and confirm
+          it to complete the process. Make sure your password is strong and
+          secure.
         </p>
       </div>
 
-      <div className="flex flex-col justify-center items-start w-full mt-6">
+      <div className="flex flex-col justify-center items-start w-full mt-3">
         <label className="text-sm font-bold" htmlFor="email">
-          Email Addres
+          New Password
         </label>
         <div className="border w-full py-3 px-6 rounded-full mt-2 bg-white flex gap-2 items-center">
-          <img src="./public/mail.svg" alt="" />
+          <img src="./public/lock.svg" alt="" />
+
           <input
-            type="text"
-            className="bg-white w-full"
+            type={`${hide ? "password" : "text"}`}
+            className=" w-full focus:outline-none"
             onChange={(e) => {
-              setEmail(e.target.value);
+              setPassword(e.target.value);
             }}
-            value={email}
+            value={password}
           />
+          {hide ? (
+            <img
+              src="./public/hide.svg"
+              alt=""
+              className="cursor-pointer"
+              onClick={() => setHide(false)}
+            />
+          ) : (
+            <img
+              src="./public/unhide.svg"
+              alt=""
+              className="cursor-pointer"
+              onClick={() => setHide(true)}
+            />
+          )}
         </div>
       </div>
 

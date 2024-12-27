@@ -7,6 +7,10 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
+  sendPasswordResetEmail,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
+  deleteUser,
 } from "firebase/auth";
 
 export const DataContext = createContext("");
@@ -100,6 +104,70 @@ export function DataContextProvider(props) {
       });
   }
 
+  function reset_password(email) {
+    sendPasswordResetEmail(auth, email, { url: "http://localhost:3000/" })
+      .then(() => {
+        // Password reset email sent!
+        // ..
+        console.log("Password reset email sent!");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Error Message:", error.message);
+        // ..
+      });
+  }
+
+  function firebase_create_new_password(actionCode, newPassword) {
+    // Verify the password reset code is valid.
+    verifyPasswordResetCode(auth, actionCode)
+      .then((email) => {
+        const accountEmail = email;
+        console.log("Código ha sido condifmardo.");
+        // TODO: Show the reset screen with the user's email and ask the user for
+        // the new password.
+
+        confirmPasswordReset(auth, actionCode, newPassword)
+          .then((resp) => {
+            // Password reset has been confirmed and new password updated.
+            // TODO: Display a link back to the app, or sign-in the user directly
+            // if the page belongs to the same domain as the app:
+            // auth.signInWithEmailAndPassword(accountEmail, newPassword);
+            // TODO: If a continue URL is available, display a button which on
+            // click redirects the user back to the app via continueUrl with
+            // additional state determined from that URL's parameters.
+            console.log("Contraseña actualizada");
+          })
+          .catch((error) => {
+            // Error occurred during confirmation. The code might have expired or the
+            // password is too weak.
+            console.log("Error Message:", error.message);
+          });
+      })
+      .catch((error) => {
+        // Invalid or expired action code. Ask user to try to reset the password
+        // again.
+        console.log("Error Message:", error.message);
+      });
+  }
+
+  function delete_user() {
+    setLoading_auth(true);
+    const user = auth.currentUser;
+    deleteUser(user)
+      .then(() => {
+        // User deleted.
+        setLoading_auth(false);
+        setUser_logged(false);
+        console.log("User deleted.");
+      })
+      .catch((error) => {
+        console.log("Error Message:", error.message);
+        // An error ocurred
+        // ...
+      });
+  }
   return (
     <DataContext.Provider
       value={{
@@ -114,6 +182,9 @@ export function DataContextProvider(props) {
         create_user,
         error,
         setError,
+        reset_password,
+        firebase_create_new_password,
+        delete_user,
       }}
     >
       {props.children}
