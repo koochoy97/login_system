@@ -6,7 +6,7 @@ import { Error_message } from "./Error_message";
 export function Sign_up() {
   const { user_logged, loading_auth, create_user, check_user } =
     useContext(DataContext);
-  const [full_name, setFull_name] = useState("Jaime Koochoy");
+  const [full_name, setFull_name] = useState("");
   const [email, setEmail] = useState("jaime23koochoy@gmail.com");
   const [password, setPassword] = useState("Teclado6");
 
@@ -14,7 +14,7 @@ export function Sign_up() {
   let navigate = useNavigate();
 
   const handle_submit = (e) => {
-    create_user(email, password);
+    create_user(email, password, full_name);
   };
 
   useEffect(() => {

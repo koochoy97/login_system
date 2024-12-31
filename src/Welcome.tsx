@@ -12,7 +12,10 @@ export function Welcome() {
     log_out,
     loading_auth,
     reset_password,
-    delete_user,
+    getUserData,
+    user_data,
+    setUser,
+    setUser_data,
   } = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [mail, setMail] = useState("");
@@ -26,6 +29,11 @@ export function Welcome() {
       setLoading(false); // Una vez el usuario es verificado, ya no se muestra el loading
     }
     fetchUser();
+
+    return () => {
+      setUser({});
+      setUser_data({});
+    };
   }, []);
 
   useEffect(() => {
@@ -35,6 +43,10 @@ export function Welcome() {
   }, [user_logged]);
 
   useEffect(() => {
+    if (user.uid) {
+      console.log("sadafsa");
+      getUserData();
+    }
     setMail(user?.email);
   }, [user]);
 
@@ -52,7 +64,7 @@ export function Welcome() {
         <Warning_modal open_modal={open_modal} setOpen_modal={setOpen_modal} />
         <img src="./public/Logo.png" className="w-[120px]" alt="" />
 
-        <h1 className="text-3xl font-bold">Welcome, Jaime!</h1>
+        <h1 className="text-3xl font-bold">Welcome, {user_data.full_name}!</h1>
         <div className="data_container w-full flex gap-x-10 flex-wrap my-10">
           <div className="flex flex-col justify-center items-start mt-4 w-[45%]">
             <label className="text-sm font-bold" htmlFor="email">
@@ -83,11 +95,6 @@ export function Welcome() {
                   className="bg-slate-100 w-full focus:outline-none"
                   value="********"
                   disabled
-                />
-                <img
-                  src="./public/mail.svg"
-                  alt=""
-                  className="cursor-pointer"
                 />
               </div>
               <p

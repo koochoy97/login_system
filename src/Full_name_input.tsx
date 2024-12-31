@@ -1,16 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { DataContext } from "./Context/DataContext";
 export function Full_name_input() {
   const [disable_full_name_input, setDisable_full_name_input] = useState(true);
   const [temp_full_name, setTemp_full_name] = useState("");
   const [full_name, setFull_name] = useState("");
 
+  const { user_data, edit_user_data } = useContext(DataContext);
   useEffect(() => {
-    setFull_name("Jaime Koochoy");
-    setTemp_full_name("Jaime Koochoy");
+    return () => {
+      setFull_name("");
+      setTemp_full_name("");
+    };
   }, []);
+
+  useEffect(() => {
+    setFull_name(user_data?.full_name);
+    setTemp_full_name(user_data?.full_name);
+  }, [user_data]);
+
   const save_edited_full_name = () => {
     setDisable_full_name_input(true);
     setFull_name(temp_full_name);
+    edit_user_data(temp_full_name);
   };
 
   const cancel_edited_full_name = () => {
@@ -35,7 +46,7 @@ export function Full_name_input() {
             value={temp_full_name}
             onChange={(e) => setTemp_full_name(e.target.value)}
           />
-          <img src="./public/mail.svg" alt="" />
+          <img src="./public/people.svg" alt="" className="h-[20px]" />
         </div>
         {disable_full_name_input ? (
           <img

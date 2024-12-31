@@ -1,5 +1,16 @@
 import { createContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  doc,
+  addDoc,
+} from "firebase/firestore";
 
 import {
   getAuth,
@@ -28,7 +39,9 @@ export function DataContextProvider(props) {
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const test = "hola";
+
+  // Inicializa Firestore y obtén una referencia a la base de datos
+  const db = getFirestore(app);
 
   const auth = getAuth();
 
@@ -36,8 +49,10 @@ export function DataContextProvider(props) {
   const [user_logged, setUser_logged] = useState(null);
   const [error, setError] = useState(null);
   const [loading_auth, setLoading_auth] = useState(false);
+  const [user_data, setUser_data] = useState({});
+  const [db_document_id, setDb_document_id] = useState("");
 
-  async function create_user(email, password) {
+  async function create_user(email, password, full_name) {
     setLoading_auth(true);
 
     if (auth) {
@@ -46,6 +61,7 @@ export function DataContextProvider(props) {
           console.log("User created successfully:", userCredential.user);
           setLoading_auth(false);
           setUser_logged(true);
+          create_user_data(full_name, userCredential.user.uid);
         })
         .catch((error) => {
           console.error("Error Code:", error.code);
@@ -65,6 +81,7 @@ export function DataContextProvider(props) {
         setUser(user);
         setLoading_auth(false);
         setUser_logged(true);
+        console.log(user);
       })
       .catch((error) => {
         setLoading_auth(false);
@@ -168,10 +185,59 @@ export function DataContextProvider(props) {
         // ...
       });
   }
+
+  function getUserData() {
+    console.log(user);
+    const users_collection = collection(db, "users_data");
+    const q = query(users_collection, where("UID", "==", user?.uid));
+
+    getDocs(q)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() es un objeto con los datos del documento
+          console.log(doc.data());
+          setDb_document_id(doc.id);
+          setUser_data(doc.data());
+        });
+      })
+      .catch((error) => {
+        console.error("Error getting documents: ", error);
+      });
+  }
+
+  async function edit_user_data(new_name) {
+    try {
+      // Add a new document in collection "cities"
+      await setDoc(
+        doc(db, "users_data", db_document_id),
+        {
+          full_name: new_name,
+        },
+        { merge: true }
+      );
+      console.log("Document successfully written!");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  async function create_user_data(new_name, user_uid) {
+    console.log(user);
+    try {
+      // Add a new document in collection "cities"
+      await addDoc(collection(db, "users_data"), {
+        full_name: new_name,
+        UID: user_uid,
+      });
+      console.log("Document successfully written!");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
   return (
     <DataContext.Provider
       value={{
-        test,
         login_user,
         check_user,
         user,
@@ -185,6 +251,13 @@ export function DataContextProvider(props) {
         reset_password,
         firebase_create_new_password,
         delete_user,
+        getUserData,
+        user_data,
+        setUser_data,
+        db_document_id,
+        edit_user_data,
+        setUser,
+        create_user_data,
       }}
     >
       {props.children}
