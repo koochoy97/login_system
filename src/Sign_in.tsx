@@ -6,8 +6,8 @@ import { Error_message } from "./Error_message";
 export function Sign_in() {
   const { login_user, user, user_logged, loading_auth, check_user } =
     useContext(DataContext);
-  const [email, setEmail] = useState("jaime23koochoy@gmail.com");
-  const [password, setPassword] = useState("Teclado6");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [hide, setHide] = useState(true);
   let navigate = useNavigate();
@@ -89,11 +89,6 @@ export function Sign_in() {
               />
             )}
           </div>
-        </div>
-
-        <div className="remember_container w-full justify-start items-center flex mt-3">
-          <input type="checkbox" className="mr-2" />
-          <span className="text-sm font-medium">Remember For 30 Days</span>
         </div>
 
         <button

@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
+import toast, { Toaster } from "react-hot-toast";
+
 import {
   collection,
   query,
@@ -51,6 +53,7 @@ export function DataContextProvider(props) {
   const [loading_auth, setLoading_auth] = useState(false);
   const [user_data, setUser_data] = useState({});
   const [db_document_id, setDb_document_id] = useState("");
+  const [loading_reset_password, setLoading_reset_password] = useState(false);
 
   async function create_user(email, password, full_name) {
     setLoading_auth(true);
@@ -122,11 +125,14 @@ export function DataContextProvider(props) {
   }
 
   function reset_password(email) {
+    setLoading_reset_password(true);
     sendPasswordResetEmail(auth, email, { url: "http://localhost:3000/" })
       .then(() => {
         // Password reset email sent!
         // ..
         console.log("Password reset email sent!");
+        setLoading_reset_password(false);
+        toast.success("Password reset email sent!");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -178,6 +184,7 @@ export function DataContextProvider(props) {
         setLoading_auth(false);
         setUser_logged(false);
         console.log("User deleted.");
+        toast("User deleted");
       })
       .catch((error) => {
         console.log("Error Message:", error.message);
@@ -216,6 +223,7 @@ export function DataContextProvider(props) {
         { merge: true }
       );
       console.log("Document successfully written!");
+      toast.success("Field updated");
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -258,6 +266,7 @@ export function DataContextProvider(props) {
         edit_user_data,
         setUser,
         create_user_data,
+        loading_reset_password,
       }}
     >
       {props.children}

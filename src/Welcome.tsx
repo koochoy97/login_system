@@ -10,12 +10,12 @@ export function Welcome() {
     check_user,
     user,
     log_out,
-    loading_auth,
     reset_password,
     getUserData,
     user_data,
     setUser,
     setUser_data,
+    loading_reset_password,
   } = useContext(DataContext);
   const [loading, setLoading] = useState(true);
   const [mail, setMail] = useState("");
@@ -97,12 +97,26 @@ export function Welcome() {
                   disabled
                 />
               </div>
-              <p
-                className="text-[#4F46E5] cursor-pointer text-sm font-['Plus_Jakarta_Sans']"
-                onClick={() => reset_password(mail)}
+              <div
+                className={`${
+                  loading_reset_password ? "text-[#979797]" : "text-[#4F46E5] "
+                }  cursor-pointer text-sm font-['Plus_Jakarta_Sans'] w-full flex  justify-start gap-2 items-center text-left transition-all duration-200`}
               >
-                Reset Password
-              </p>
+                <p className=" relative" onClick={() => reset_password(mail)}>
+                  Reset Password
+                  <span className="absolute left-1/2 ">
+                    <img
+                      src="./public/loader.gif"
+                      className={`w-[20px] transition-all duration-200 ${
+                        loading_reset_password
+                          ? "opacity-100 z-50"
+                          : "opacity-0 z-0"
+                      } opacity-0`}
+                      alt=""
+                    />
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </div>

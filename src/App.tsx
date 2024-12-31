@@ -9,6 +9,7 @@ import { Welcome } from "./Welcome";
 import { Sign_up } from "./Sign_up";
 import { Reset_password } from "./Reset_password";
 import { Create_new_password } from "./Create_new_password";
+import toast, { Toaster } from "react-hot-toast";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -23,6 +24,7 @@ function App() {
   return (
     <>
       <DataContextProvider>
+        <Toaster />
         <div className="w-full flex h-screen justify-center items-center bg-[#F8FAFC] py-20">
           <RouterProvider router={router} />
         </div>
