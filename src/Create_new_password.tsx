@@ -4,8 +4,6 @@ import { useNavigate, useSearchParams } from "react-router";
 
 export function Create_new_password() {
   const {
-    user_logged,
-    loading_auth,
     firebase_create_new_password,
     loading_reset_password,
     reset_success,

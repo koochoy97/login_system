@@ -1,8 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 import {
   collection,
@@ -32,7 +32,12 @@ export const DataContext = createContext("");
 
 const provider = new GoogleAuthProvider();
 
-export function DataContextProvider(props) {
+type User = {
+  email: string;
+  uid: string;
+};
+
+export function DataContextProvider(props: React.PropsWithChildren) {
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDFezDC5DErhy2vsg-zClyhiin1sTihZi8",
@@ -51,8 +56,8 @@ export function DataContextProvider(props) {
 
   const auth = getAuth();
 
-  const [user, setUser] = useState({});
-  const [user_logged, setUser_logged] = useState(null);
+  const [user, setUser] = useState<User>({ email: "", uid: "" });
+  const [user_logged, setUser_logged] = useState<null | boolean>(null);
   const [error, setError] = useState(null);
   const [loading_auth, setLoading_auth] = useState(false);
   const [user_data, setUser_data] = useState({});
@@ -60,7 +65,11 @@ export function DataContextProvider(props) {
   const [loading_reset_password, setLoading_reset_password] = useState(false);
   const [reset_success, setReset_success] = useState(false);
 
-  async function create_user(email, password, full_name) {
+  async function create_user(
+    email: string,
+    password: string,
+    full_name: string
+  ) {
     setLoading_auth(true);
 
     if (auth) {
@@ -80,7 +89,7 @@ export function DataContextProvider(props) {
     }
   }
 
-  async function login_user(email, password) {
+  async function login_user(email: string, password: string) {
     setLoading_auth(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -93,8 +102,6 @@ export function DataContextProvider(props) {
       })
       .catch((error) => {
         setLoading_auth(false);
-        const errorCode = error.code;
-        const errorMessage = error.message;
         console.error("Error Message:", error.message);
         setError(error);
       });
@@ -106,7 +113,6 @@ export function DataContextProvider(props) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         console.log("User is signed in");
-        const uid = user.uid;
         setUser(user);
         setUser_logged(true);
         // ...
@@ -129,7 +135,7 @@ export function DataContextProvider(props) {
       });
   }
 
-  function reset_password(email) {
+  function reset_password(email: string) {
     setLoading_reset_password(true);
     sendPasswordResetEmail(auth, email)
       .then(() => {
@@ -141,32 +147,25 @@ export function DataContextProvider(props) {
         setReset_success(true);
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
         console.log("Error Message:", error.message);
         // ..
       });
   }
 
-  function firebase_create_new_password(actionCode, newPassword) {
+  function firebase_create_new_password(
+    actionCode: string,
+    newPassword: string
+  ) {
     setLoading_reset_password(true);
     // Verify the password reset code is valid.
     verifyPasswordResetCode(auth, actionCode)
       .then((email) => {
-        const accountEmail = email;
         console.log("Código ha sido condifmardo.");
         // TODO: Show the reset screen with the user's email and ask the user for
         // the new password.
 
         confirmPasswordReset(auth, actionCode, newPassword)
           .then((resp) => {
-            // Password reset has been confirmed and new password updated.
-            // TODO: Display a link back to the app, or sign-in the user directly
-            // if the page belongs to the same domain as the app:
-            // auth.signInWithEmailAndPassword(accountEmail, newPassword);
-            // TODO: If a continue URL is available, display a button which on
-            // click redirects the user back to the app via continueUrl with
-            // additional state determined from that URL's parameters.
             console.log("Contraseña actualizada");
             setLoading_reset_password(false);
             toast.success("Password successfully changed");
@@ -224,7 +223,7 @@ export function DataContextProvider(props) {
       });
   }
 
-  async function edit_user_data(new_name) {
+  async function edit_user_data(new_name: string) {
     try {
       // Add a new document in collection "cities"
       await setDoc(
@@ -242,7 +241,7 @@ export function DataContextProvider(props) {
     }
   }
 
-  async function create_user_data(new_name, user_uid) {
+  async function create_user_data(new_name: string, user_uid: string) {
     console.log(user);
     try {
       // Add a new document in collection "cities"
