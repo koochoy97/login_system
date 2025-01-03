@@ -16,3 +16,7 @@ Este proyecto es un sistema de Login 100% funcional hecho con React, Tailwind y 
 - **Firebase**: Plataforma de Google para el backend, incluyendo autenticación y base de datos (Firestore).
 - **React Hot Toast**: Biblioteca para mostrar notificaciones tipo "toast".
 - **React Context API**: Para manejar el estado global de la autenticación de usuario.
+
+## Diseño UI
+- Para el diseño de la interfaz se utilizó el diseño 6 Free Authentication Screen UI realizado en FIGMA por el autor slothui: https://www.figma.com/@slothui
+
