@@ -32,12 +32,7 @@ export const DataContext = createContext("");
 
 const provider = new GoogleAuthProvider();
 
-type User = {
-  email: string;
-  uid: string;
-};
-
-export function DataContextProvider(props: React.PropsWithChildren) {
+export function DataContextProvider(props) {
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDFezDC5DErhy2vsg-zClyhiin1sTihZi8",
@@ -51,13 +46,13 @@ export function DataContextProvider(props: React.PropsWithChildren) {
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
 
-  // Inicializa Firestore y obtén una referencia a la base de datos
+  // Initialize Firestore and get a reference to the database
   const db = getFirestore(app);
 
   const auth = getAuth();
 
-  const [user, setUser] = useState<User>({ email: "", uid: "" });
-  const [user_logged, setUser_logged] = useState<null | boolean>(null);
+  const [user, setUser] = useState({ email: "", uid: "" });
+  const [user_logged, setUser_logged] = useState(null);
   const [error, setError] = useState(null);
   const [loading_auth, setLoading_auth] = useState(false);
   const [user_data, setUser_data] = useState({});
@@ -65,11 +60,7 @@ export function DataContextProvider(props: React.PropsWithChildren) {
   const [loading_reset_password, setLoading_reset_password] = useState(false);
   const [reset_success, setReset_success] = useState(false);
 
-  async function create_user(
-    email: string,
-    password: string,
-    full_name: string
-  ) {
+  async function create_user(email, password, full_name) {
     setLoading_auth(true);
 
     if (auth) {
@@ -89,11 +80,10 @@ export function DataContextProvider(props: React.PropsWithChildren) {
     }
   }
 
-  async function login_user(email: string, password: string) {
+  async function login_user(email, password) {
     setLoading_auth(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
         setUser(user);
         setLoading_auth(false);
@@ -110,15 +100,10 @@ export function DataContextProvider(props: React.PropsWithChildren) {
   function check_user() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
         console.log("User is signed in");
         setUser(user);
         setUser_logged(true);
-        // ...
       } else {
-        // User is signed out
-        // ...
         setUser_logged(false);
         console.log("User is signed out");
       }
@@ -127,20 +112,14 @@ export function DataContextProvider(props: React.PropsWithChildren) {
 
   function log_out() {
     signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-      })
-      .catch((error) => {
-        // An error happened.
-      });
+      .then(() => {})
+      .catch((error) => {});
   }
 
-  function reset_password(email: string) {
+  function reset_password(email) {
     setLoading_reset_password(true);
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        // Password reset email sent!
-        // ..
         console.log("Password reset email sent!");
         setLoading_reset_password(false);
         toast.success("Password reset email sent!");
@@ -148,39 +127,26 @@ export function DataContextProvider(props: React.PropsWithChildren) {
       })
       .catch((error) => {
         console.log("Error Message:", error.message);
-        // ..
       });
   }
 
-  function firebase_create_new_password(
-    actionCode: string,
-    newPassword: string
-  ) {
+  function firebase_create_new_password(actionCode, newPassword) {
     setLoading_reset_password(true);
-    // Verify the password reset code is valid.
     verifyPasswordResetCode(auth, actionCode)
       .then((email) => {
-        console.log("Código ha sido condifmardo.");
-        // TODO: Show the reset screen with the user's email and ask the user for
-        // the new password.
-
         confirmPasswordReset(auth, actionCode, newPassword)
           .then((resp) => {
-            console.log("Contraseña actualizada");
+            console.log("Password updated");
             setLoading_reset_password(false);
             toast.success("Password successfully changed");
             setReset_success(true);
           })
           .catch((error) => {
-            // Error occurred during confirmation. The code might have expired or the
-            // password is too weak.
             console.log("Error Message:", error.message);
             setLoading_reset_password(false);
           });
       })
       .catch((error) => {
-        // Invalid or expired action code. Ask user to try to reset the password
-        // again.
         console.log("Error Message:", error.message);
         setLoading_reset_password(false);
       });
@@ -191,7 +157,6 @@ export function DataContextProvider(props: React.PropsWithChildren) {
     const user = auth.currentUser;
     deleteUser(user)
       .then(() => {
-        // User deleted.
         setLoading_auth(false);
         setUser_logged(false);
         console.log("User deleted.");
@@ -199,8 +164,6 @@ export function DataContextProvider(props: React.PropsWithChildren) {
       })
       .catch((error) => {
         console.log("Error Message:", error.message);
-        // An error ocurred
-        // ...
       });
   }
 
@@ -212,7 +175,6 @@ export function DataContextProvider(props: React.PropsWithChildren) {
     getDocs(q)
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          // doc.data() es un objeto con los datos del documento
           console.log(doc.data());
           setDb_document_id(doc.id);
           setUser_data(doc.data());
@@ -223,9 +185,8 @@ export function DataContextProvider(props: React.PropsWithChildren) {
       });
   }
 
-  async function edit_user_data(new_name: string) {
+  async function edit_user_data(new_name) {
     try {
-      // Add a new document in collection "cities"
       await setDoc(
         doc(db, "users_data", db_document_id),
         {
@@ -241,10 +202,8 @@ export function DataContextProvider(props: React.PropsWithChildren) {
     }
   }
 
-  async function create_user_data(new_name: string, user_uid: string) {
-    console.log(user);
+  async function create_user_data(new_name, user_uid) {
     try {
-      // Add a new document in collection "cities"
       await addDoc(collection(db, "users_data"), {
         full_name: new_name,
         UID: user_uid,
@@ -258,10 +217,8 @@ export function DataContextProvider(props: React.PropsWithChildren) {
   function google_sign_in() {
     try {
       signInWithPopup(auth, provider).then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-        // The signed-in user info.
         setUser(result.user);
 
         const users_collection = collection(db, "users_data");
@@ -270,7 +227,6 @@ export function DataContextProvider(props: React.PropsWithChildren) {
         getDocs(q)
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-              // doc.data() es un objeto con los datos del documento
               console.log(doc.data());
               setDb_document_id(doc.id);
             });
