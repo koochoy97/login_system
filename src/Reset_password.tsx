@@ -3,9 +3,16 @@ import { DataContext } from "./Context/DataContext";
 import { useNavigate } from "react-router";
 
 export function Reset_password() {
-  const { login_user, user, user_logged, loading_auth, reset_password } =
-    useContext(DataContext);
-  const [email, setEmail] = useState("jaime23koochoy@gmail.com");
+  const {
+    login_user,
+    user,
+    user_logged,
+    loading_auth,
+    reset_password,
+    loading_reset_password,
+    reset_success,
+  } = useContext(DataContext);
+  const [email, setEmail] = useState("");
 
   let navigate = useNavigate();
 
@@ -18,6 +25,12 @@ export function Reset_password() {
       navigate("/welcome");
     }
   }, [user_logged]);
+
+  useEffect(() => {
+    if (reset_success === true) {
+      navigate("/");
+    }
+  }, [reset_success]);
 
   return (
     <div className="w-full flex flex-col h-full items-center font-['Plus_Jakarta_Sans'] px-6 max-w-[480px]">
@@ -51,7 +64,7 @@ export function Reset_password() {
         className="w-full mt-3 bg-[#4F46E5] py-3 px-6 rounded-full text-white flex justify-center items-center"
         onClick={handle_submit}
       >
-        {loading_auth ? (
+        {loading_reset_password ? (
           <img src="./public/loader.gif" alt="" className="w-[20px]" />
         ) : (
           <span className="flex gap-2 items-center">

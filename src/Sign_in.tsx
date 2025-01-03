@@ -4,8 +4,14 @@ import { useNavigate } from "react-router";
 import { Error_message } from "./Error_message";
 
 export function Sign_in() {
-  const { login_user, user, user_logged, loading_auth, check_user } =
-    useContext(DataContext);
+  const {
+    login_user,
+    user,
+    user_logged,
+    loading_auth,
+    check_user,
+    google_sign_in,
+  } = useContext(DataContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -134,18 +140,16 @@ export function Sign_in() {
           </span>
         </div>
 
-        <button className="w-full mt-3 bg-white border py-3 px-6 rounded-full text-[#1E293B] font-bold flex justify-center items-center">
+        <button
+          className="w-full mt-3 bg-white border py-3 px-6 rounded-full text-[#1E293B] font-bold flex justify-center items-center"
+          onClick={() => google_sign_in()}
+        >
           <img
             src="./public/google-icon.webp"
             className="w-[22px] mr-2"
             alt=""
           />
           Sign In With Google
-        </button>
-
-        <button className="w-full mt-3 bg-white border py-3 px-6 rounded-full text-[#1E293B] font-bold flex justify-center items-center">
-          <img src="./public/facebook.png" className="w-[22px] mr-2" alt="" />
-          Sign In With Meta
         </button>
       </div>
     );

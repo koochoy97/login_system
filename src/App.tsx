@@ -1,7 +1,3 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import { useContext } from "react";
 import "./App.css";
 import { DataContextProvider } from "./Context/DataContext";
 import { Sign_in } from "./Sign_in";
@@ -9,7 +5,7 @@ import { Welcome } from "./Welcome";
 import { Sign_up } from "./Sign_up";
 import { Reset_password } from "./Reset_password";
 import { Create_new_password } from "./Create_new_password";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 

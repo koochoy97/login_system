@@ -24,9 +24,13 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
   deleteUser,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 export const DataContext = createContext("");
+
+const provider = new GoogleAuthProvider();
 
 export function DataContextProvider(props) {
   // Your web app's Firebase configuration
@@ -54,6 +58,7 @@ export function DataContextProvider(props) {
   const [user_data, setUser_data] = useState({});
   const [db_document_id, setDb_document_id] = useState("");
   const [loading_reset_password, setLoading_reset_password] = useState(false);
+  const [reset_success, setReset_success] = useState(false);
 
   async function create_user(email, password, full_name) {
     setLoading_auth(true);
@@ -126,13 +131,14 @@ export function DataContextProvider(props) {
 
   function reset_password(email) {
     setLoading_reset_password(true);
-    sendPasswordResetEmail(auth, email, { url: "http://localhost:3000/" })
+    sendPasswordResetEmail(auth, email)
       .then(() => {
         // Password reset email sent!
         // ..
         console.log("Password reset email sent!");
         setLoading_reset_password(false);
         toast.success("Password reset email sent!");
+        setReset_success(true);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -143,6 +149,7 @@ export function DataContextProvider(props) {
   }
 
   function firebase_create_new_password(actionCode, newPassword) {
+    setLoading_reset_password(true);
     // Verify the password reset code is valid.
     verifyPasswordResetCode(auth, actionCode)
       .then((email) => {
@@ -161,17 +168,22 @@ export function DataContextProvider(props) {
             // click redirects the user back to the app via continueUrl with
             // additional state determined from that URL's parameters.
             console.log("Contraseña actualizada");
+            setLoading_reset_password(false);
+            toast.success("Password successfully changed");
+            setReset_success(true);
           })
           .catch((error) => {
             // Error occurred during confirmation. The code might have expired or the
             // password is too weak.
             console.log("Error Message:", error.message);
+            setLoading_reset_password(false);
           });
       })
       .catch((error) => {
         // Invalid or expired action code. Ask user to try to reset the password
         // again.
         console.log("Error Message:", error.message);
+        setLoading_reset_password(false);
       });
   }
 
@@ -222,6 +234,7 @@ export function DataContextProvider(props) {
         },
         { merge: true }
       );
+      setUser_data({ full_name: new_name, UID: user.uid });
       console.log("Document successfully written!");
       toast.success("Field updated");
     } catch (e) {
@@ -240,6 +253,46 @@ export function DataContextProvider(props) {
       console.log("Document successfully written!");
     } catch (e) {
       console.error("Error adding document: ", e);
+    }
+  }
+
+  function google_sign_in() {
+    try {
+      signInWithPopup(auth, provider).then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        setUser(result.user);
+
+        const users_collection = collection(db, "users_data");
+        const q = query(users_collection, where("UID", "==", result.user?.uid));
+
+        getDocs(q)
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              // doc.data() es un objeto con los datos del documento
+              console.log(doc.data());
+              setDb_document_id(doc.id);
+            });
+            if (querySnapshot.size > 0) {
+              console.log("User already exists");
+            } else {
+              create_user_data(result.user.displayName, result.user.uid);
+              setUser_data({
+                full_name: result.user.displayName,
+                UID: result.user.uid,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error getting documents: ", error);
+          });
+
+        setUser_logged(true);
+      });
+    } catch (error) {
+      console.error("Unexpected error: ", error);
     }
   }
 
@@ -267,6 +320,8 @@ export function DataContextProvider(props) {
         setUser,
         create_user_data,
         loading_reset_password,
+        google_sign_in,
+        reset_success,
       }}
     >
       {props.children}
